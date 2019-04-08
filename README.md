@@ -1,4 +1,4 @@
-# Populate Facebookg Photo Datetime
+# Populate Facebook Photo Datetime
 This is a script that sets EXIF creation timestamp for photos exported from Facebook. This is for people wishing to recover photos from Facebook, which are unfortunately without their original EXIF data as of April 2019.
 
 ## Usage

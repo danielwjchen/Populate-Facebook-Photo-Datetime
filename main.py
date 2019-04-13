@@ -18,8 +18,9 @@ def get_album_json_filepaths(album_path: str) -> List[str]:
 
     return result
 
-def populate_facebook_photo_datetime(facebook_folder_path: str):
+def populate_facebook_photo_datetime(facebook_folder_path: str) -> List[str]:
     album_path = join(facebook_folder_path, 'photos_and_videos', 'album')
+    result = []
     if not isdir(album_path):
         raise Exception(
             'Folder ./photos_and_videos does not exist in the given path.'
@@ -41,11 +42,20 @@ def populate_facebook_photo_datetime(facebook_folder_path: str):
                     photo['creation_timestamp']
                 )
                 exif_dict = piexif.load(photo_filepath)
-                exif_dict['Exif'][piexif.ExifIFD.DateTimeOriginal] = \
+                original_datetime = \
                     create_datetime.strftime("%Y:%m:%d %H:%M:%S")
+                exif_dict['Exif'][piexif.ExifIFD.DateTimeOriginal] = \
+                    original_datetime
+                    
 
                 exif_bytes = piexif.dump(exif_dict)
                 piexif.insert(exif_bytes, photo_filepath)
+                result.append(
+                    f'Sets origin datetime of {photo_filepath} '
+                    f'to {original_datetime}'
+                )
+
+    return result
 
 if __name__ == "__main__":
     if len(sys.argv) > 2:
@@ -54,4 +64,6 @@ if __name__ == "__main__":
     elif len(sys.argv) == 1:
         raise Exception('Must specify filepath to the facebook folder.')
 
-    populate_facebook_photo_datetime(sys.argv[1])
+    result = populate_facebook_photo_datetime(sys.argv[1])
+    for photo in result:
+        print(photo)
